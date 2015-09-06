@@ -1,10 +1,8 @@
-
-
-       # The initiateboard function clears all the spots on the board and places initial four tiles on the board.
+from string import *
 
 class Reversi:
 
-    def _init_(self):
+    def __init__(self):
 
         self.board = []
         self.computer = '0'
@@ -14,13 +12,14 @@ class Reversi:
 
         for i in range(8):
             self.board.append([" "]*8)
+     
         for i in range(8):
             for j in range(8):
                 self.board[i][j] = " "
-        self.board[3][3] = self.player 
-        self.board[3][4] = self.computer
-        self.board[4][3] = self.computer 
-        self.board[4][4] = self.player 
+        self.board[3][3] = 'X'
+        self.board[3][4] = '0'
+        self.board[4][3] = '0' 
+        self.board[4][4] = 'X'
 
 
        # The onboard function checks if both the horizontal position and the vertical position of a new tile are on the range of the board.
@@ -64,7 +63,7 @@ class Reversi:
         position = spot
         x = int(position[0]) - 1
         y = int(position[1]) - 1
-        if onboard(x,y) and self.board[y][x] == " ":
+        if self.onboard(x,y) and self.board[y][x] == " ":
             return x, y
         else:
             return -2, -2
@@ -103,13 +102,13 @@ class Reversi:
                 y += ydirection
                 # Moves that can cause user's tiles to be reversed are better than those that can't help increase the score of the computer.Hence only continuing the while
                 # loop if there is user's tile around.
-                while onboard(x,y) and self.board[y][x] == oppositetile :
+                while self.onboard(x,y) and self.board[y][x] == oppositetile :
             
                     x += xdirection
                     y += ydirection
                     
                     #  When the while loop above stops, we get the x, y of the possible moves. If its position is on the board and also unoccupied, then count the number of user's tiles that can be flipped.   
-                if onboard(x,y) and self.board[y][x] == " ":
+                if self.onboard(x,y) and self.board[y][x] == " ":
                 
                     if abs(x -  tilelist[i][0]) > 1 or abs(y - tilelist[i][1]) > 1:
                     
@@ -126,12 +125,12 @@ class Reversi:
                                 besty = y
         # if the computer does not excute the above loop, which means that there is no user's tile around the current computer tiles, the computer will put its tile on any of the four corners.
         
-        if bestx == -1 and corner():
-            besty, bestx = getcorner()
+        if bestx == -1 and self.corner():
+            besty, bestx = self.getcorner()
             print bestx, besty
             # if all the corners on the board are already occupied by user's tiles, the computer will put its new tile on any of the empty spot on the board.
-        elif bestx == -1 and not corner():
-            bestx, besty = getemptyspot()
+        elif bestx == -1 and not self.corner():
+            bestx, besty = self.getemptyspot()
             # Returns the computer's move.   
         return  bestx, besty
 
@@ -146,15 +145,15 @@ class Reversi:
             x += xdirection
             y += ydirection
         
-            while onboard(x,y) and self.board[y][x] == oppositetile:
+            while self.onboard(x,y) and self.board[y][x] == oppositetile:
                     x += xdirection
                     y += ydirection
                     # keep incrementing both the x and y position of the new tile till it meets the tile of its own type.
-            if onboard(x,y) and self.board[y][x] == tile:
+            if self.onboard(x,y) and self.board[y][x] == tile:
                 x -= xdirection
                 y -= ydirection
                 # going backwards and reverse all the opposite tiles in between.
-                while onboard(x,y) and self.board[y][x] == oppositetile:
+                while self.onboard(x,y) and self.board[y][x] == oppositetile:
                     self.board[y][x] = tile
                     x -= xdirection
                     y -= ydirection
@@ -190,7 +189,7 @@ class Reversi:
             print " |"
             print horline
 
-    def assigntile(usertile):
+    def assigntile(self,usertile):
         tile = " "
         if usertile == "X":
             tile = "0"
@@ -200,101 +199,3 @@ class Reversi:
 
 
 
-from string import *
-import time 
-
-
-def main():
-    # create the 8 * 8 grid.(variable:board)
-    
-    
-
-        # aske the user to input the tile he chooses to play and also assign computer the other tile.
-    usertile = raw_input("Welcome to the Rerversi Game! Do you want to play X(black tile) or 0(white tile)?Please enter X or 0.")
-    usertile = usertile.upper()
-    computertile = assigntile(usertile)
-       # print the initial board with four tiles in the center.
-    board = initiateboard(board)
-    drawboard(board)
-       # Set the sum of the number of computer's tiles and the number of user's tiles on the board to be zero.
-    sumscore = 0
-
-    # While there is still empty spot on the board, the loop continues. When every spot on the board has been occupied, the loop stops.
-    while sumscore < 64:
-        print
-        # ask the user to input the position on the board where he wants to place his tile.
-        userspot = raw_input("Where do you want to place your tile? Please enter in format like this: 34(horizontal position: 3, vertical position: 4)[Enter a negative number if you want to quit the game.]")
-        # If the user chooses to quit the game, print byebye and break the while loop by setting the sumscore to be a number larger than 64.
-        if int(userspot) < 0:
-            print "byebye!"
-            sumscore = 67
-            # If the user chooses to continue the game, get the x, y index. If the user chooses a spot that has been occupied or outside the board, ask the user to input again.
-        elif int(userspot) > 0:
-
-            userx, usery =  getxy(board,userspot)
-
-            while userx == -2 or usery == -2:
-                print "Sorry. Invalid Move. Please try again."
-                userspot = raw_input("Where do you want to place your tile? Please enter in format like this: 34(horizontal position: 3, vertical position: 4)[Enter a negative number if you want to quit the game.]")
-                
-                userx, usery =  getxy(board,userspot)
-
-                # update the board according to user's input.
-
-            update = updateboard(board,userx,usery,usertile)
-
-                # get a newboard on which new tile has been placed and tiles of the other type have been reversed.
-
-            newboard = reverse(update,userx,usery,usertile,computertile)
-            print 
-            print "Here is your move!" + str(userx + 1) + str(usery + 1)
-            print
-            # draw the board so that user can see the new board.
-
-            drawboard(newboard)
-
-            # get the x, y index of the computer's move.
-
-            compx, compy = searchbestmoves(newboard, computertile, usertile)
-
-            # update the board according to computer's move.
-
-            update = updateboard(board,compx,compy,computertile)
-
-            # get a new board on which computer's new tile has been placed and user's tiles are reversed.
-
-            newboard = reverse(update,compx,compy,computertile,usertile)
-
-            print
-            print
-            print "wait for computer to decide its move!"
-            # make sure that there is a pause between showing the two board.
-            time.sleep(4)
-            print 
-            print "This is computer's move!" + str(compx + 1) + str(compy + 1)
-            print 
-
-            drawboard(newboard)
-
-            # Each round, count the number of computer's tiles on the board and the number of user's tiles on the board.
-            userscore, computerscore = getscore(newboard, usertile, computertile)
-            # Each round, count the sum of the number of computer's tiles and the number of user's tiles on the board.
-            sumscore = userscore + computerscore
-            # update the board.
-            board = newboard
-
-            # At the end of the game, if there are more user's tiles on the board, user wins the game. If there are more computer's tiles on the board, computer wins the game.
-            # If there are equal numner of computer's tiles and user's tiles on the board, print no one wins the game.
-    
-    if userscore > computerscore:
-        print"You win the game!ByeBye"
-    elif userscore < computerscore:
-        print"Computer win the game!ByeBye"
-    else:
-        print"No one wins. ByeBye"
-    
-    
-main()
-       
-
-    
