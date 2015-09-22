@@ -57,8 +57,10 @@ class Reversi:
         besty = emptyspotlist[0][0]
         return bestx, besty
 
-        #  The getxy function takes user's input of the position of his tile and returns the index of it. If the user chooses an occupied position or a position outside the board, the function returns negative numbers.
-
+        
+    def getBoard(self):
+        return self.board
+#  The getxy function takes user's input of the position of his tile and returns the index of it. If the user chooses an occupied position or a position outside the board, the function returns negative numbers.
     def getxy(self,spot):
         position = spot
         x = int(position[0]) - 1
@@ -132,7 +134,7 @@ class Reversi:
         elif bestx == -1 and not self.corner():
             bestx, besty = self.getemptyspot()
             # Returns the computer's move.   
-        return  bestx, besty
+        return  (bestx, besty)
 
     # The reverse function is designed to reverse tiles. The parameters are the board, the position of a new tile which is just placed on the board, the type of it and the type of the other tile.
     def reverse(self,initx,inity,tile,oppositetile):
@@ -154,6 +156,7 @@ class Reversi:
                 y -= ydirection
                 # going backwards and reverse all the opposite tiles in between.
                 while self.onboard(x,y) and self.board[y][x] == oppositetile:
+                    print x,y
                     self.board[y][x] = tile
                     x -= xdirection
                     y -= ydirection

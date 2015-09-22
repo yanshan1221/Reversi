@@ -1,34 +1,38 @@
 import pygame
 import os
-
+from Reversi import Reversi
+import sys
 
 class Reversi_GUI:
-	def _init_(self):
+	def __init__(self):
 
 		pygame.init()
+		pygame.display.init()
 		self.screen_width = 600
 		self.screen_height = 600
- 		self.screen = pygame.display.set_mode([screen_width,screen_height])
- 		pygame.display.set_caption('Play Reversi')
+		self.screen = pygame.display.set_mode([self.screen_width,self.screen_height])
 
- 		self.boardColor = (137, 42, 96)
+ 		pygame.display.set_caption('Play Reversi')
+ 		self.boardColor = (38, 102, 28)
  		self.lineColor = (183,168,168)
+
  		self.playerTileColor = (255,255,255)
  		self.computerTileColor = (0,0,0)
- 		self.tileRadius = 70
-
+ 		self.tileRadius = 21
  		self.fontStyle = ""
  		self.fontSize = 30
- 		self.font = pygame.font.SysFont(fontStyle, fontSize)
-
+ 		#self.font = pygame.font.SysFont(fontStyle, fontSize)
  		self.boardX = 150
  		self.boardY = 100
  		self.boardSize = 400
 
- 		self.loadImages()
+ 		self.user_Tile = "X"
+ 		self.computer_Tile = "0"
+
+ 		#self.loadImages()
 
  	# function that loads all necessary images from directory GUI.
-	def loadImages():
+	def loadImages(self):
 
 		self.player_Tile = pygame.image.load(os.path.join("images","Reversi_Player_Tile.png")).convert()
 		#self.player_Tile = pygame.transform.scale(self.white_queen, (self.square_size,self.square_size))
@@ -38,44 +42,47 @@ class Reversi_GUI:
 
 
 	# function that draws the reversi board, which is a 8*8 chessboard.
-	def drawBoard(board):
-		pygame.draw.rect(screen, self.boardColor,pygame.Rect(self.boardX ,self.boardY, self.boardSize, self.boardSize))
+	def drawBoard(self,board):
+		self.screen.fill((255,255,255))
+		pygame.draw.rect(self.screen, self.boardColor,pygame.Rect(self.boardX ,self.boardY, self.boardSize, self.boardSize))
 		
 		# draw all horizontal lines for the board.
 		for i in range(9):
 			start_pos = (self.boardX, self.boardY + i*50)
 			end_pos = (self.boardX + self.boardSize,self.boardY + i*50)
-			pygame.draw.line(screen, self.lineColor,start_pos, end_pos, width=1)
+			pygame.draw.line(self.screen, self.lineColor,start_pos, end_pos, 1)
 
-		# draw all vertical lines for the board. 
+		# # draw all vertical lines for the board. 
 		for i in range(9):
 			start_pos = (self.boardX + i*50, self.boardY)
 			end_pos = (self.boardX + i*50, self.boardY + self.boardSize)
-			pygame.draw.line(screen, self.lineColor,start_pos, end_pos, width=1)
+			pygame.draw.line(self.screen, self.lineColor,start_pos, end_pos, 1)
 
 		# draw all tiles on the board. 
 		for i in range(8):
 			for j in range(8):
-				posX = self.boardX + 50 * i + 25
-				posY = self.boardY + 50 * j + 25
-				pos = (posX, posY)
+				posY_ = self.boardY + 50 * i + 25
+				posX_ = self.boardX + 50 * j + 25
+				pos_ = (posX_, posY_)
 
-				if board[i][j] = "X":
-					pygame.draw.circle(screen, self.playerTileColor, pos, self.tileRadius, width=0)
-				elif board[i][j] = "0":
-					pygame.draw.circle(screen, self.computerTileColor, pos, self.tileRadius, width=0)
+				if board[i][j] == "X":
+					pygame.draw.circle(self.screen, self.playerTileColor, pos_, self.tileRadius, 0)
+				elif board[i][j] == "0":
+					pygame.draw.circle(self.screen, self.computerTileColor, pos_, self.tileRadius, 0)
 
 
 	# function that writes text to the screen 	
-	def writeText(computerScore, playerScore, computerMove, playerMove):
+	def writeText(self,computerScore, playerScore, computerMove, playerMove):
+		return
 
-	
-	def reverseTiles(oldBoard,newBoard):
+	def reverseTiles(self,oldBoard,newBoard):
+		return
+
 
 	
 	
 	# This function checks if user clicks area within the board. 
-	def checkValid(x,y):
+	def checkValid(self,x,y):
 		valid = True
 		if x < 150 or x > 550:
 			valid = False
@@ -84,68 +91,105 @@ class Reversi_GUI:
 		return valid
 
 	# This converts the screen coordinate to array coordiante when parameter is 1, and backwards when parameter is 0. ONLY VALID MOVE.
-	def convertCoordinate(parameter, (x,y)):
+	def convertCoordinate(self,parameter, (x,y)):
 		pos = (0,0)
-		if parameter == '1':
+		if parameter == 1:
 			x_ = (x - self.boardX) / 50
 			y_ = (y - self.boardY) / 50
 			pos = (x_, y_)
 
-		elif parameter == '0':
+		elif parameter == 0:
 
-			posX = self.boardX + 50 * x_ + 25
-			posY = self.boardY + 50 * y_ + 25
+			posX = self.boardX + 50 * x_ + self.tileRadius
+			posY = self.boardY + 50 * y_ + self.tileRadius
 			pos = (posX, posY)
+
+		return pos
 
 
 
 	# functino that draws tiles on the chess board according to the updated board, board is a two-dimensional array with its entries specifying tiles placed on the board. 
 	# (x,y) is the screen coordinate. 
-	def placeTile((x,y)):
+	def placeTile(self,(x,y)):
+		return
+
 		
 
 
-	def run_game():
+	def run_game(self,board,reversi):
 		# board = initializeBoard() (*init* from main.py)
-		drawBoard()
 
+		self.drawBoard(board)
+		reverse = False
+		waitForComputer = False
+		state = 0
+		(p_x,p_y) = (1,0)
 		while 1:
 			for event in pygame.event.get():
+				
 				if event.type is pygame.QUIT:
 					sys.exit()
-				elif event.type is KEYDOWN:
+				elif event.type is pygame.MOUSEBUTTONDOWN:
 					(mouseX,mouseY) = pygame.mouse.get_pos()
+					print (mouseX,mouseY)
 					# call functions from main that returns an updated board with new tiles being placed. 
-					# newBoard = updateBoard(...)
-
-					#placing player's tile on the board
-					placeTile(newBoard)
-
-					#flip all tiles necessary
-					reverseTiles(board,newBoard)
-
-					#writeText(computerScore, playerScore, computerMove, playerMove)
-
-					# watch out for pointer issue here. 
-					board = newBoard
-
-					#get computer's tile, return newBoard with computer's tiles placed on it. 
-
-					drawTiles(newBoard)
-
-					#flip all tiles necessary
-					reverseTiles(board,newBoard)
-
-					board = newBoard
-
+					if self.checkValid(mouseX,mouseY):
+						(p_x,p_y) = self.convertCoordinate(1,(mouseX,mouseY))
+						
+						board = reversi.updateboard(p_x,p_y,self.user_Tile)
+						reverse = True
+						waitForComputer = True
+						state = 1
 				else:
-					drawTiles(board)
+					if reverse is True:
+						print "reverse"
+						#flip all tiles necessary
+						
+						if state == 1:
+							board = reversi.reverse(p_x,p_y,self.user_Tile,self.computer_Tile)
+						elif state == 2:
+							board = reversi.reverse(p_x,p_y,self.computer_Tile,self.user_Tile)
+						
+						reverse = False
+						state = 0
+
+				 	elif waitForComputer is True:
+				 		(p_x,p_y)= reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
+				 		board = reversi.updateboard(p_x,p_y,self.computer_Tile)
+            	
+				 		print "waitForComputer"
+				 		waitForComputer  = False
+				 		reverse = True
+				 		state = 2
+
+	            		
+           	
+
+				# update board
+				self.drawBoard(board)
+				
+
+			# allow any update of the display to be visible
+			pygame.display.flip()
+			pygame.time.wait(120)
+               
 
 
 
 # we need a updateBoard function that gives the newly updated two dimensional array. Also need the updated computer and player score. 
+if __name__ == "__main__":
+	
+	# create the 8 * 8 grid.(variable:board)
+    reversi = Reversi()
+        # aske the user to input the tile he chooses to play and also assign computer the other tile. 
+    computertile = reversi.assigntile('X')
+       # print the initial board with four tiles in the center.
+    reversi.initiateboard()
+    board = reversi.getBoard()
 
+    game = Reversi_GUI()
 
+    game.run_game(board,reversi)
 
 
 
