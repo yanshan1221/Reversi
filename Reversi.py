@@ -174,7 +174,7 @@ class Reversi:
                     countusertile = countusertile + 1
                 elif self.board[i][j] == computertile:
                     countcomputertile = countcomputertile + 1
-        print "Your score is" + str(countusertile), "Computer's score is" + str(countcomputertile)
+        
         return countusertile, countcomputertile
     
        # The drawboard function draws the game board every time a new tile is placed on the board.

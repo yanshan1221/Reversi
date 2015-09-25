@@ -6,7 +6,10 @@ class Min_Max_Tree:
  	def __init__(self,pos):
  		self.value = None
  		self.next = []
- 		self.pos = pos
+ 		if pos:
+ 			self.pos = "min"
+ 		else:
+ 			self.pos = "max"
 
  	def addNode(self,node):
  		self.next.append(node)

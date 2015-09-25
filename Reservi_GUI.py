@@ -8,7 +8,7 @@ class Reversi_GUI:
 
 		pygame.init()
 		pygame.display.init()
-		self.screen_width = 600
+		self.screen_width = 700
 		self.screen_height = 600
 		self.screen = pygame.display.set_mode([self.screen_width,self.screen_height])
 
@@ -19,10 +19,16 @@ class Reversi_GUI:
  		self.playerTileColor = (255,255,255)
  		self.computerTileColor = (0,0,0)
  		self.tileRadius = 21
- 		self.fontStyle = ""
- 		self.fontSize = 30
+ 		
+ 		self.textFont = pygame.font.SysFont(None, 25)
+ 		self.fontColor = (123,0,0)
+
+ 		self.user_pos = "None"
+ 		self.computer_pos = "None"
+
+
  		#self.font = pygame.font.SysFont(fontStyle, fontSize)
- 		self.boardX = 150
+ 		self.boardX = 250
  		self.boardY = 100
  		self.boardSize = 400
 
@@ -30,6 +36,7 @@ class Reversi_GUI:
  		self.computer_Tile = "0"
 
  		#self.loadImages()
+ 
 
  	# function that loads all necessary images from directory GUI.
 	def loadImages(self):
@@ -39,6 +46,15 @@ class Reversi_GUI:
 
 		self.computer_Tile = pygame.image.load(os.path.join("images","Reversi_Computer_Tile.png")).convert()
 		#self.computer_Tile = pygame.transform.scale(self.white_king, (self.square_size,self.square_size))
+
+
+
+	def updatePos(self,role,x,y):
+		if role == 1:
+			self.user_pos = (x,y)
+		else:
+			self.computer_pos = (x,y)
+		return 
 
 
 	# function that draws the reversi board, which is a 8*8 chessboard.
@@ -69,6 +85,9 @@ class Reversi_GUI:
 					pygame.draw.circle(self.screen, self.playerTileColor, pos_, self.tileRadius, 0)
 				elif board[i][j] == "0":
 					pygame.draw.circle(self.screen, self.computerTileColor, pos_, self.tileRadius, 0)
+		
+		self.update_Text()
+
 
 
 	# function that writes text to the screen 	
@@ -77,9 +96,6 @@ class Reversi_GUI:
 
 	def reverseTiles(self,oldBoard,newBoard):
 		return
-
-
-	
 	
 	# This function checks if user clicks area within the board. 
 	def checkValid(self,x,y):
@@ -106,6 +122,28 @@ class Reversi_GUI:
 
 		return pos
 
+	def update_Text(self,):
+		# updating the scores of both user and computer. 
+		user_score, computer_score = reversi.getscore(self.user_Tile, self.computer_Tile)
+		print user_score
+		user_score_string = "User Score:" + str(user_score)
+		computer_score_string = "Computer score: " + str(computer_score)
+		user_score = self.textFont.render(user_score_string,True,self.fontColor)
+		computer_score = self.textFont.render(computer_score_string,True,self.fontColor)
+		self.screen.blit(user_score,(35,150))
+		self.screen.blit(computer_score,(35,300))
+
+		# updating the position of a new tile placed by the user and and the computer. 
+
+		user_pos_string = "New Tile Position: " + str(self.user_pos)
+		computer_pos_string = "New Tile position: " + str(self.computer_pos)
+
+		user_pos_string = self.textFont.render(user_pos_string,True,self.fontColor)
+		computer_pos_string = self.textFont.render(computer_pos_string,True,self.fontColor)
+		self.screen.blit(user_pos_string,(35,200))
+		self.screen.blit(computer_pos_string,(35,350))
+
+		return
 
 
 	# functino that draws tiles on the chess board according to the updated board, board is a two-dimensional array with its entries specifying tiles placed on the board. 
@@ -120,6 +158,8 @@ class Reversi_GUI:
 		# board = initializeBoard() (*init* from main.py)
 
 		self.drawBoard(board)
+
+		
 		reverse = False
 		waitForComputer = False
 		state = 0
@@ -135,11 +175,12 @@ class Reversi_GUI:
 					# call functions from main that returns an updated board with new tiles being placed. 
 					if self.checkValid(mouseX,mouseY):
 						(p_x,p_y) = self.convertCoordinate(1,(mouseX,mouseY))
-						
+						self.updatePos(1,p_x+1,p_y+1)
 						board = reversi.updateboard(p_x,p_y,self.user_Tile)
 						reverse = True
 						waitForComputer = True
 						state = 1
+						
 				else:
 					if reverse is True:
 						print "reverse"
@@ -156,8 +197,8 @@ class Reversi_GUI:
 				 	elif waitForComputer is True:
 				 		(p_x,p_y)= reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
 				 		board = reversi.updateboard(p_x,p_y,self.computer_Tile)
-            	
-				 		print "waitForComputer"
+						self.updatePos(0,p_x+1,p_y+1)
+						print "waitForComputer"
 				 		waitForComputer  = False
 				 		reverse = True
 				 		state = 2
@@ -188,6 +229,7 @@ if __name__ == "__main__":
     board = reversi.getBoard()
 
     game = Reversi_GUI()
+
 
     game.run_game(board,reversi)
 

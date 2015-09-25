@@ -1,7 +1,8 @@
 # Implementation of the Alpha-Beta Pruning.
 # Does not set value of node. 
+# take in a min max tree and return the root value through propagation.
 
-from Reversi import Reversi
+
 from Min_Max_Tree import Min_Max_Tree
 
 def Alpha_Beta(node, alpha, beta):
@@ -26,10 +27,6 @@ def Alpha_Beta(node, alpha, beta):
 					beta = m
 			return beta
 			#node.setValue(best)
-		
-		
-				
-
 
 # Testing.
 if __name__ == "__main__":
