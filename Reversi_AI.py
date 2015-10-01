@@ -47,6 +47,7 @@ class Reversi_AI:
 					y += ydirection
                     #  When the while loop above stops, we get the x, y of the possible moves. If its position is on the board and also unoccupied, then count the number of user's tiles that can be flipped.   
 				if self.onboard(x,y) and board[y][x] == " ":
+					# dealing the case when there is no opposite tile around the tile. 
 					if abs(x -  tilelist[i][0]) > 1 or abs(y - tilelist[i][1]) > 1:
 						if (x,y) not in possibleMoves:
 							possibleMoves.append((x,y))
@@ -64,49 +65,58 @@ class Reversi_AI:
 			for j in range(len(board[i])):
 				# at position (i,j)
 				if board[i][j] != " ":
-
 					weight = 1
 					# C positions
 					if (i,j) in [(0,1),(0,6),(1,0),(1,7),(6,0),(7,1),(6,7),(7,6)]:
 						weight = self.Cweight
-						print("C")
 						# X positions
 					elif (i,j) in [(1,1),(1,6),(6,1),(6,6)]:
-						weight = self.Xweight
-						print("X")
+						weight = self.Xweight	
 						# Corners	
 					elif (i,j) in [(0,0),(7,7),(0,7),(7,0)]:
-						weight = self.cornerWeight
-						print("Corner")
+						weight = self.cornerWeight	
 					if board[i][j] == tile:
-						
 						score = weight + score
-						print(score)
+						
 					else:
 						score = weight * (-1) + score
 		nextMoves = self.searchAllmoves(board,tile,oppositetile)
 		mobility = len(nextMoves)
-		print("mobility",mobility)
 		score = score + mobility
 		return score 
 
+	def drawboard(self,board):
+		print "   1   2   3   4   5   6   7   8"
+		horline = " .___.___.___.___.___.___.___.___."
+		verline = "|   |   |   |   |   |   |   |   | "
+		print horline 
+		for i in range(8):
+			print " %s" %verline  
+			print str(i + 1) + verline
+			for j in range(8):
+				print " |%s"% board[i][j],
+			print " |"
+			print horline
+
 	#  m = True for min, false for max.
 	def generateTree(self,board,depth,m,tile,oppositetile):
-
+		self.drawboard(board)
+		print tile
 		node = Min_Max_Tree(m)
 		# when finish all the lookups. 
 		if depth == 0:
 			score = self.f_s(board,"X","0")
 			node.setValue(score)
-			print(board, "with score",score)
+			print(score)
 			return node
 		# logic
 		else:
 			# a list of moves
 			moves = self.searchAllmoves(board,tile,oppositetile)
 			for move in moves:
-				board = self.updateBoard(board,move,tile,oppositetile)
-				child = self.generateTree(board,depth - 1,not m,oppositetile,tile)
+				newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile)
+				self.drawboard(newBoard)
+				child = self.generateTree(newBoard,depth - 1,not m,oppositetile,tile)
 				node.addNode(child)
 
 			return node
@@ -136,15 +146,25 @@ class Reversi_AI:
 		
 				#node.setValue(best)
 				
-	
-	def updateBoard(self,board,move,tile,oppositetile):
+	# changed the updateBoard function
+	def updateBoardRepresentation(self,board,move,tile,oppositetile):
+		newBoard = []
+		for i in range(8):
+			newBoard.append([" "]*8)
+		for i in range(8):
+			for j in range(8):
+				newBoard[i][j] = " " 
+		for i in range(8):
+			for j in range(8):
+				newBoard[i][j] = board[i][j]
 		y = move[1]
 		x = move[0]
-		board[y][x] = tile
-		board = self.reverse(x,y,tile,oppositetile)
-		return board
+		newBoard[y][x] = tile
+		newBoard = self.reverse(newBoard,x,y,tile,oppositetile)
+		return newBoard
 
-	def reverse(self,initx,inity,tile,oppositetile):
+	# changed reverse function
+	def reverse(self,board,initx,inity,tile,oppositetile):
 
         # for the new tile, search in eight directions for its oppositetile.
         
@@ -180,9 +200,9 @@ class Reversi_AI:
 		bestScore = 0
 		if len(possibleMoves) > 0:
 			for move in possibleMoves:
-				board = self.updateBoard(board,move,tile,oppositetile)
+				newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile)
 				
-				root = self.generateTree(board,depth,m,oppositetile,tile)
+				root = self.generateTree(newBoard,depth,m,oppositetile,tile)
 			
 				alpha, beta = float("-inf"),float("inf")
 				new = self.Alpha_Beta(root, alpha, beta)
@@ -211,7 +231,22 @@ if __name__ == "__main__":
 	board[3][4] = '0'
 	board[4][3] = '0' 
 	board[4][4] = 'X'
-	(x,y) = reversi_AI.getBestMove(board,2,"X","0")
+
+	#board[1][1] = 'X'
+	#board[0][1] = '0' 
+	#board[1][0] = 'X'
+	#board[0][0] = '0'
+
+	# Testing for Search ALl Moves:
+	#testPossibleMoves = reversi_AI.searchAllmoves(board,'X','0')
+	#for move in testPossibleMoves:
+		#print "Testing For searchAllmoves:", move
+
+	# Testing for f_s
+	#scoreR = reversi_AI.f_s(board,"X","0")
+	#print "Testin for f_s", scoreR
+
+	(x,y) = reversi_AI.getBestMove(board,1,"X","0")
 
 	print (x,y)
 
