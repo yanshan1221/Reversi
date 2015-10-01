@@ -9,7 +9,7 @@ class Reversi_GUI:
 		pygame.init()
 		pygame.display.init()
 		self.screen_width = 700
-		self.screen_height = 600
+		self.screen_height = 560
 		self.screen = pygame.display.set_mode([self.screen_width,self.screen_height])
 
  		pygame.display.set_caption('Play Reversi')
@@ -20,8 +20,8 @@ class Reversi_GUI:
  		self.computerTileColor = (0,0,0)
  		self.tileRadius = 21
  		
- 		self.textFont = pygame.font.SysFont(None, 25)
- 		self.fontColor = (123,0,0)
+ 		self.textFont = pygame.font.SysFont("Times", 15)
+ 		self.fontColor = (255,204,153)
 
  		self.user_pos = "None"
  		self.computer_pos = "None"
@@ -29,7 +29,7 @@ class Reversi_GUI:
 
  		#self.font = pygame.font.SysFont(fontStyle, fontSize)
  		self.boardX = 250
- 		self.boardY = 100
+ 		self.boardY = 60
  		self.boardSize = 400
 
  		self.user_Tile = "X"
@@ -59,7 +59,7 @@ class Reversi_GUI:
 
 	# function that draws the reversi board, which is a 8*8 chessboard.
 	def drawBoard(self,board):
-		self.screen.fill((255,255,255))
+		self.screen.fill((74,42,29))
 		pygame.draw.rect(self.screen, self.boardColor,pygame.Rect(self.boardX ,self.boardY, self.boardSize, self.boardSize))
 		
 		# draw all horizontal lines for the board.
@@ -126,7 +126,7 @@ class Reversi_GUI:
 		# updating the scores of both user and computer. 
 		user_score, computer_score = reversi.getscore(self.user_Tile, self.computer_Tile)
 		print user_score
-		user_score_string = "User Score:" + str(user_score)
+		user_score_string = "User Score: " + str(user_score)
 		computer_score_string = "Computer score: " + str(computer_score)
 		user_score = self.textFont.render(user_score_string,True,self.fontColor)
 		computer_score = self.textFont.render(computer_score_string,True,self.fontColor)

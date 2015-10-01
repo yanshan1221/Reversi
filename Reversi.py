@@ -92,7 +92,7 @@ class Reversi:
         bestx = -1
         besy = -1
 
-        # for each conputer's tile on the board, search in eight directions for the possible next move.
+        # for each computer's tile on the board, search in eight directions for the possible next move.
         for i in range(len(tilelist)):
             initx = tilelist[i][0]
             inity = tilelist[i][1]
