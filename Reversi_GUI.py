@@ -98,13 +98,32 @@ class Reversi_GUI:
 		return
 	
 	# This function checks if user clicks area within the board. 
-	def checkValid(self,x,y):
+	# also checks if user's choice at least flips one opponent's tile on the board. 
+	def checkValid(self,x,y,board,tile,oppositetile):
 		valid = True
-		if x < 150 or x > 550:
+		if 250 > x or x > 650:
 			valid = False
-		if y < 100 or y > 500:
+		if 60 > y or y > 460:
 			valid = False
-		return valid
+		(x,y) =  self.convertCoordinate(1,(x,y))
+		hasTile = False
+		for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
+			go_x = x
+			go_y = y
+			go_x  += xdirection
+			go_y += ydirection
+			while self.onboard(go_x,go_y) and board[go_y][go_x] == oppositetile:
+				print(go_x,go_y)
+				go_x += xdirection
+				go_y += ydirection
+			if self.onboard(go_x,go_y) and board[go_y][go_x] == tile:
+				
+				hasTile = True
+		
+		return (valid and hasTile)
+
+	def onboard(self,x, y):
+		return x >= 0 and x <= 7 and y >= 0 and y <=7
 
 	# This converts the screen coordinate to array coordiante when parameter is 1, and backwards when parameter is 0. ONLY VALID MOVE.
 	def convertCoordinate(self,parameter, (x,y)):
@@ -151,12 +170,8 @@ class Reversi_GUI:
 	def placeTile(self,(x,y)):
 		return
 
-		
-
-
 	def run_game(self,board,reversi):
 		# board = initializeBoard() (*init* from main.py)
-
 		self.drawBoard(board)
 
 		
@@ -173,8 +188,9 @@ class Reversi_GUI:
 					(mouseX,mouseY) = pygame.mouse.get_pos()
 					print (mouseX,mouseY)
 					# call functions from main that returns an updated board with new tiles being placed. 
-					if self.checkValid(mouseX,mouseY):
+					if self.checkValid(mouseX,mouseY,board,"X","0"):
 						(p_x,p_y) = self.convertCoordinate(1,(mouseX,mouseY))
+						print("ready to update")
 						self.updatePos(1,p_x+1,p_y+1)
 						board = reversi.updateboard(p_x,p_y,self.user_Tile)
 						reverse = True
@@ -184,8 +200,7 @@ class Reversi_GUI:
 				else:
 					if reverse is True:
 						print "reverse"
-						#flip all tiles necessary
-						
+						#flip all tiles necessary	
 						if state == 1:
 							board = reversi.reverse(p_x,p_y,self.user_Tile,self.computer_Tile)
 						elif state == 2:
@@ -195,31 +210,28 @@ class Reversi_GUI:
 						state = 0
 
 				 	elif waitForComputer is True:
-				 		(p_x,p_y)= reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
-				 		board = reversi.updateboard(p_x,p_y,self.computer_Tile)
-						self.updatePos(0,p_x+1,p_y+1)
-						print "waitForComputer"
-				 		waitForComputer  = False
-				 		reverse = True
-				 		state = 2
 
-	            		
-           	
+				 		bestMove = reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
+				 		if bestMove != None:
+				 			board = reversi.updateboard(p_x,p_y,self.computer_Tile)
+							self.updatePos(0,p_x+1,p_y+1)
+							print "waitForComputer"
+				 			reverse = True
+				 			state = 2
+				 		waitForComputer  = False
+				 		
+
 
 				# update board
 				self.drawBoard(board)
-				
 
 			# allow any update of the display to be visible
 			pygame.display.flip()
 			pygame.time.wait(120)
-               
-
-
+  
 
 # we need a updateBoard function that gives the newly updated two dimensional array. Also need the updated computer and player score. 
 if __name__ == "__main__":
-	
 	# create the 8 * 8 grid.(variable:board)
     reversi = Reversi()
         # aske the user to input the tile he chooses to play and also assign computer the other tile. 
@@ -227,20 +239,6 @@ if __name__ == "__main__":
        # print the initial board with four tiles in the center.
     reversi.initiateboard()
     board = reversi.getBoard()
-
     game = Reversi_GUI()
-
-
     game.run_game(board,reversi)
-
-
-
-
-
-
-
-
-
-
-
 

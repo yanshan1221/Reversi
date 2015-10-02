@@ -98,27 +98,38 @@ class Reversi_AI:
 			print horline
 
 	#  m = True for min, false for max.
-	def generateTree(self,board,depth,m,tile,oppositetile):
+	def generateTree(self,board,depth,m,tile,oppositetile,alpha,beta):
 		#self.drawboard(board)
 		#print tile
-		node = Min_Max_Tree(m)
+		#node = Min_Max_Tree(m)
 		# when finish all the lookups. 
 		if depth == 0:
 			score = self.f_s(board,"X","0")
-			node.setValue(score)
+			#node.setValue(score)
 			#print(score)
-			return node
+			return score
 		# logic
 		else:
 			# a list of moves
 			moves = self.searchAllmoves(board,tile,oppositetile)
-			for move in moves:
-				newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile)
-				#self.drawboard(newBoard)
-				child = self.generateTree(newBoard,depth - 1,not m,oppositetile,tile)
-				node.addNode(child)
+			childValue  = 0
+			if len(moves) > 0:
+				for move in moves:
+					newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile) #self.drawboard(newBoard)
+					childValue = self.generateTree(newBoard,depth - 1,not m,oppositetile,tile,alpha,beta)
+			else:
+				childValue = self.generateTree(board,depth-1,not m,oppositetile,alpha,beta)
 
-			return node
+			if m:
+				if childValue < beta:
+					beta = childValue
+				return beta
+			elif not m:
+				if childValue > alpha:
+					alpha = childValue
+				return alpha
+			
+
 
 	# execute the alpha beta pruning of the min max tree. 
 	def Alpha_Beta(self,node, alpha, beta):
@@ -191,25 +202,23 @@ class Reversi_AI:
 
 
 	# we lose the data about possible moves in the tree. 
+	# This function will return None when the searchAllmoves function has length 0. 
 	def getBestMove(self,board,depth,tile,oppositetile):
 		m = False # this is equivalent to "max".
 		possibleMoves = self.searchAllmoves(board,tile,oppositetile)
-		
+		#print(possibleMoves)
 		bestMove = None
-		bestScore = 0
+		bestScore = float("-inf")
 		if len(possibleMoves) > 0:
 			for move in possibleMoves:
 				newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile)
-				
-				root = self.generateTree(newBoard,depth,m,oppositetile,tile)
-			
 				alpha, beta = float("-inf"),float("inf")
-				new = self.Alpha_Beta(root, alpha, beta)
-				
-				if  new > bestScore:
+				new = self.generateTree(newBoard,depth,m,oppositetile,tile,alpha,beta)
+				#print(new)
+				#new = self.Alpha_Beta(root, alpha, beta)	
+				if  new >= bestScore:
 					bestScore = new
 					bestMove = move
-
 		return bestMove
 
 
@@ -231,10 +240,10 @@ if __name__ == "__main__":
 	board[4][3] = '0' 
 	board[4][4] = 'X'
 
-	#board[1][1] = 'X'
-	#board[0][1] = '0' 
-	#board[1][0] = 'X'
-	#board[0][0] = '0'
+	board[1][1] = 'X'
+	board[0][1] = '0' 
+	board[1][0] = 'X'
+	board[0][0] = '0'
 
 	# Testing for Search ALl Moves:
 	#testPossibleMoves = reversi_AI.searchAllmoves(board,'X','0')
@@ -245,7 +254,7 @@ if __name__ == "__main__":
 	#scoreR = reversi_AI.f_s(board,"X","0")
 	#print "Testin for f_s", scoreR
 
-	(x,y) = reversi_AI.getBestMove(board,6,"X","0")
+	(x,y) = reversi_AI.getBestMove(board,5,"X","0")
 
 	print (x,y)
 
