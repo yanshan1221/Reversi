@@ -1,4 +1,5 @@
 from string import *
+from Reversi_AI import Reversi_AI
 
 class Reversi:
 
@@ -78,63 +79,10 @@ class Reversi:
         #  The searchbestmoves function is the AI of this program. It helps the computer decide which move can maximize its score.
 
     def searchbestmoves(self, tile, oppositetile):
+        AI = Reversi_AI()
+        suggestMove = AI.getBestMove(self.board,5,tile,oppositetile)
+        return suggestMove
 
-        # First, get a list of positions of computer's tiles on the board.
-        tilelist = []
-        for i in range(8):
-            for j in range(8):
-                if self.board[i][j] == tile:
-                   
-                   tilelist.append([j,i])
-                   #  Set the largest number of usertiles that can be flipped to zero.
-                   #  Set the best move's horizontal position to be -1 and its vertical position to be -1.
-        largenumflipped = 0
-        bestx = -1
-        besy = -1
-
-        # for each computer's tile on the board, search in eight directions for the possible next move.
-        for i in range(len(tilelist)):
-            initx = tilelist[i][0]
-            inity = tilelist[i][1]
-            
-            for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
-                x = initx
-                y = inity
-                x += xdirection
-                y += ydirection
-                # Moves that can cause user's tiles to be reversed are better than those that can't help increase the score of the computer.Hence only continuing the while
-                # loop if there is user's tile around.
-                while self.onboard(x,y) and self.board[y][x] == oppositetile :
-            
-                    x += xdirection
-                    y += ydirection
-                    
-                    #  When the while loop above stops, we get the x, y of the possible moves. If its position is on the board and also unoccupied, then count the number of user's tiles that can be flipped.   
-                if self.onboard(x,y) and self.board[y][x] == " ":
-                
-                    if abs(x -  tilelist[i][0]) > 1 or abs(y - tilelist[i][1]) > 1:
-                    
-                        differencex = abs(x -  tilelist[i][0])
-                        differencey = abs(y - tilelist[i][1])
-                        if differencex == differencey:
-                            flippednumber = differencex - 1
-                        else:
-                            flippednumber = abs(differencex - differencey) - 1
-                            # Get the position of the move which can cause the largest number of user's tiles to be reversed.
-                            if flippednumber > largenumflipped:
-                                largenumflipped = flippednumber
-                                bestx = x
-                                besty = y
-        # if the computer does not excute the above loop, which means that there is no user's tile around the current computer tiles, the computer will put its tile on any of the four corners.
-        
-        if bestx == -1 and self.corner():
-            besty, bestx = self.getcorner()
-            print bestx, besty
-            # if all the corners on the board are already occupied by user's tiles, the computer will put its new tile on any of the empty spot on the board.
-        elif bestx == -1 and not self.corner():
-            bestx, besty = self.getemptyspot()
-            # Returns the computer's move.   
-        return  (bestx, besty)
 
     # The reverse function is designed to reverse tiles. The parameters are the board, the position of a new tile which is just placed on the board, the type of it and the type of the other tile.
     def reverse(self,initx,inity,tile,oppositetile):

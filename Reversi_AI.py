@@ -1,5 +1,4 @@
 from Alpha_Beta import Alpha_Beta
-from Reversi import Reversi
 from Min_Max_Tree import Min_Max_Tree
 
 # The configuration of a specific board is denoted here as s. 
@@ -100,14 +99,14 @@ class Reversi_AI:
 
 	#  m = True for min, false for max.
 	def generateTree(self,board,depth,m,tile,oppositetile):
-		self.drawboard(board)
-		print tile
+		#self.drawboard(board)
+		#print tile
 		node = Min_Max_Tree(m)
 		# when finish all the lookups. 
 		if depth == 0:
 			score = self.f_s(board,"X","0")
 			node.setValue(score)
-			print(score)
+			#print(score)
 			return node
 		# logic
 		else:
@@ -115,7 +114,7 @@ class Reversi_AI:
 			moves = self.searchAllmoves(board,tile,oppositetile)
 			for move in moves:
 				newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile)
-				self.drawboard(newBoard)
+				#self.drawboard(newBoard)
 				child = self.generateTree(newBoard,depth - 1,not m,oppositetile,tile)
 				node.addNode(child)
 
@@ -160,11 +159,11 @@ class Reversi_AI:
 		y = move[1]
 		x = move[0]
 		newBoard[y][x] = tile
-		newBoard = self.reverse(newBoard,x,y,tile,oppositetile)
+		newBoard = self.reverseRep(newBoard,x,y,tile,oppositetile)
 		return newBoard
 
 	# changed reverse function
-	def reverse(self,board,initx,inity,tile,oppositetile):
+	def reverseRep(self,board,initx,inity,tile,oppositetile):
 
         # for the new tile, search in eight directions for its oppositetile.
         
@@ -246,7 +245,7 @@ if __name__ == "__main__":
 	#scoreR = reversi_AI.f_s(board,"X","0")
 	#print "Testin for f_s", scoreR
 
-	(x,y) = reversi_AI.getBestMove(board,1,"X","0")
+	(x,y) = reversi_AI.getBestMove(board,6,"X","0")
 
 	print (x,y)
 
