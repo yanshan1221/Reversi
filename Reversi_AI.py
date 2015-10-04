@@ -118,7 +118,7 @@ class Reversi_AI:
 					newBoard = self.updateBoardRepresentation(board,move,tile,oppositetile) #self.drawboard(newBoard)
 					childValue = self.generateTree(newBoard,depth - 1,not m,oppositetile,tile,alpha,beta)
 			else:
-				childValue = self.generateTree(board,depth-1,not m,oppositetile,alpha,beta)
+				childValue = self.generateTree(board,depth-1,not m,oppositetile,tile,alpha,beta)
 
 			if m:
 				if childValue < beta:

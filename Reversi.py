@@ -80,7 +80,7 @@ class Reversi:
 
     def searchbestmoves(self, tile, oppositetile):
         AI = Reversi_AI()
-        suggestMove = AI.getBestMove(self.board,1,tile,oppositetile)
+        suggestMove = AI.getBestMove(self.board,3,tile,oppositetile)
         return suggestMove
 
 
