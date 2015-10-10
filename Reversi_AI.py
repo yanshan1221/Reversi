@@ -99,14 +99,8 @@ class Reversi_AI:
 
 	#  m = True for min, false for max.
 	def generateTree(self,board,depth,m,tile,oppositetile,alpha,beta):
-		#self.drawboard(board)
-		#print tile
-		#node = Min_Max_Tree(m)
-		# when finish all the lookups. 
 		if depth == 0:
 			score = self.f_s(board,"X","0")
-			#node.setValue(score)
-			#print(score)
 			return score
 		# logic
 		else:
@@ -130,31 +124,6 @@ class Reversi_AI:
 				return alpha
 			
 
-
-	# execute the alpha beta pruning of the min max tree. 
-	def Alpha_Beta(self,node, alpha, beta):
-		if alpha >= beta:
-			return 1
-
-		elif node.Next() == []:	
-			return node.Value()
-
-		else:
-			if node.Pos() is "max":
-				for next in node.Next():
-					k = Alpha_Beta(next,alpha,beta) 
-					if k > alpha:
-						alpha = k
-				return alpha
-				#node.setValue(best)				
-			elif node.Pos() is "min":
-				for next in node.Next():
-					m = Alpha_Beta(next,alpha,beta)	
-					if m < beta:
-						beta = m
-				return beta
-		
-				#node.setValue(best)
 				
 	# changed the updateBoard function
 	def updateBoardRepresentation(self,board,move,tile,oppositetile):
