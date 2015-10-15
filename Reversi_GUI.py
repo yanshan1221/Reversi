@@ -10,45 +10,49 @@ class Reversi_GUI:
 		pygame.init()
 		pygame.display.init()
 		self.screen_width = 700
-		self.screen_height = 560
+		self.screen_height = 460
 		self.screen = pygame.display.set_mode([self.screen_width,self.screen_height])
 
- 		pygame.display.set_caption('Play Reversi')
- 		self.boardColor = (38, 102, 28)
- 		self.lineColor = (183,168,168)
+		pygame.display.set_caption('Play Reversi')
+		self.boardColor = (38, 102, 28)
+		self.lineColor = (183,168,168)
 
- 		self.playerTileColor = (255,255,255)
- 		self.computerTileColor = (0,0,0)
- 		self.tileRadius = 21
- 		
- 		self.textFont = pygame.font.SysFont("Times", 15)
- 		self.fontColor = (255,204,153)
+		self.playerTileColor = (255,255,255)
+		self.computerTileColor = (0,0,0)
+		self.tileRadius = 21
 
- 		self.user_pos = "None"
- 		self.computer_pos = "None"
+		self.textFont = pygame.font.SysFont("Times", 15)
+		self.fontColor = (255,204,153)
+
+		self.user_pos = "None"
+		self.computer_pos = "None"
 
 
- 		#self.font = pygame.font.SysFont(fontStyle, fontSize)
- 		self.boardX = 250
- 		self.boardY = 60
- 		self.boardSize = 400
+		#self.font = pygame.font.SysFont(fontStyle, fontSize)
+		self.boardX = 250
+		self.boardY = 30
+		self.boardSize = 400
+		self.user_Tile = "X"
+		self.computer_Tile = "0"
 
- 		self.user_Tile = "X"
- 		self.computer_Tile = "0"
+		#information board
+		self.infoBoardColor = (94,61,47)
+		self.infoBoardx = 30
+		self.infoBoardy = 30
+		self.infoBoardwidth = 195
+		self.infoBoardheight = 150
 
- 		#self.loadImages()
- 
+
+		self.loadImages()
 
  	# function that loads all necessary images from directory GUI.
 	def loadImages(self):
 
-		self.player_Tile = pygame.image.load(os.path.join("images","Reversi_Player_Tile.png")).convert()
-		#self.player_Tile = pygame.transform.scale(self.white_queen, (self.square_size,self.square_size))
+		self.player_Tile_image = pygame.image.load("white_tile.bmp").convert()
+		self.player_Tile_image = pygame.transform.scale(self.player_Tile_image, (49,49))
 
-		self.computer_Tile = pygame.image.load(os.path.join("images","Reversi_Computer_Tile.png")).convert()
-		#self.computer_Tile = pygame.transform.scale(self.white_king, (self.square_size,self.square_size))
-
-
+		self.computer_Tile_image = pygame.image.load("black_tile.bmp").convert()
+		self.computer_Tile_image = pygame.transform.scale(self.computer_Tile_image, (49,49))
 
 	def updatePos(self,role,x,y):
 		if role == 1:
@@ -56,7 +60,6 @@ class Reversi_GUI:
 		else:
 			self.computer_pos = (x,y)
 		return 
-
 
 	# function that draws the reversi board, which is a 8*8 chessboard.
 	def drawBoard(self,board,yield_):
@@ -78,33 +81,35 @@ class Reversi_GUI:
 		# draw all tiles on the board. 
 		for i in range(8):
 			for j in range(8):
-				posY_ = self.boardY + 50 * i + 25
-				posX_ = self.boardX + 50 * j + 25
+				posY_ = self.boardY + 50 * i +1
+				posX_ = self.boardX + 50 * j +1
 				pos_ = (posX_, posY_)
 
 				if board[i][j] == "X":
-					pygame.draw.circle(self.screen, self.playerTileColor, pos_, self.tileRadius, 0)
+					#pygame.draw.circle(self.screen, self.playerTileColor, pos_, self.tileRadius, 0)
+					self.screen.blit(self.player_Tile_image, pos_)
 				elif board[i][j] == "0":
-					pygame.draw.circle(self.screen, self.computerTileColor, pos_, self.tileRadius, 0)
+					#pygame.draw.circle(self.screen, self.computerTileColor, pos_, self.tileRadius, 0)
+					self.screen.blit(self.computer_Tile_image, pos_)
 		
 		self.update_Text(yield_)
 
-
-
 	# function that writes text to the screen 	
-	def writeText(self,computerScore, playerScore, computerMove, playerMove):
-		return
+	def endOfGame(self,computerScore, playerScore):
+		end = False
+		if computerScore + playerScore == 64:
+			end = True
+		elif computerScore == 0 or playerScore == 0:
+			end = True
+		return end
 
-	def reverseTiles(self,oldBoard,newBoard):
-		return
-	
 	# This function checks if user clicks area within the board. 
 	# also checks if user's choice at least flips one opponent's tile on the board. 
 	def checkValid(self,x,y,board,tile,oppositetile):
 		valid = True
-		if 250 > x or x > 650:
+		if self.boardX > x or x > self.boardSize + self.boardX:
 			valid = False
-		if 60 > y or y > 460:
+		if self.boardY > y or y > self.boardSize + self.boardY:
 			valid = False
 		(x,y) =  self.convertCoordinate(1,(x,y))
 		hasTile = False
@@ -126,8 +131,10 @@ class Reversi_GUI:
 		return x >= 0 and x <= 7 and y >= 0 and y <=7
 
 	# This converts the screen coordinate to array coordiante when parameter is 1, and backwards when parameter is 0. ONLY VALID MOVE.
-	def convertCoordinate(self,parameter, (x,y)):
+	def convertCoordinate(self,parameter, tuplein):
 		pos = (0,0)
+		x = tuplein[0]
+		y = tuplein[1]
 		if parameter == 1:
 			x_ = (x - self.boardX) / 50
 			y_ = (y - self.boardY) / 50
@@ -142,54 +149,99 @@ class Reversi_GUI:
 		return pos
 
 		# when yield is 0, there is no yield. When yield is 1, yield to user .When yield is 2, yield to computer
+	# call the restart function inside the update_text function.
 	def update_Text(self,yield_):
+
+		# user's score board
+		pygame.draw.rect(self.screen, self.infoBoardColor,pygame.Rect(self.infoBoardx ,self.infoBoardy, self.infoBoardwidth, self.infoBoardheight))
+
+		# computer's score board
+
+		pygame.draw.rect(self.screen, self.infoBoardColor,pygame.Rect(self.infoBoardx ,self.infoBoardy + self.infoBoardheight + 20, self.infoBoardwidth,self.infoBoardheight))
+
+		# draw user tile on the info board. 
+		self.screen.blit(self.player_Tile_image,(self.infoBoardx + 10,self.infoBoardy + 10))
+		# draw computer tile on the info board.
+		self.screen.blit(self.computer_Tile_image,(self.infoBoardx + 10,self.infoBoardy + self.infoBoardheight + 20 + 10 ))
+
+		# write down "You" and "computer".
+
+		user_string = "You"
+		computer_string = "Computer" 
+
+		user_string = self.textFont.render(user_string,True,self.fontColor)
+		computer_string = self.textFont.render(computer_string,True,self.fontColor)
+		self.screen.blit(user_string,(self.infoBoardx + 70,self.infoBoardy + 30))
+		self.screen.blit(computer_string,(self.infoBoardx + 70,self.infoBoardy + self.infoBoardheight + 20 + 30))
+
+
 		# updating the scores of both user and computer. 
 		user_score, computer_score = reversi.getscore(self.user_Tile, self.computer_Tile)
+		# checking that if the game has already ended
+		end = False
+		end = self.endOfGame(computer_score, user_score)
 		
 		user_score_string = "User Score: " + str(user_score)
 		computer_score_string = "Computer score: " + str(computer_score)
+
 		user_score = self.textFont.render(user_score_string,True,self.fontColor)
 		computer_score = self.textFont.render(computer_score_string,True,self.fontColor)
-		self.screen.blit(user_score,(35,150))
-		self.screen.blit(computer_score,(35,300))
+		self.screen.blit(user_score,(self.infoBoardx + 10,self.infoBoardy + 80))
+		self.screen.blit(computer_score,(self.infoBoardx + 10,self.infoBoardy + self.infoBoardheight + 20 + 10 + 70))
 
 		# updating the position of a new tile placed by the user and and the computer. 
 
-		user_pos_string = "New Tile Position: " + str(self.user_pos)
-		computer_pos_string = "New Tile position: " + str(self.computer_pos)
+		user_pos_string = "Current Position: " + str(self.user_pos)
+		computer_pos_string = "Current position: " + str(self.computer_pos)
 
 		user_pos_string = self.textFont.render(user_pos_string,True,self.fontColor)
 		computer_pos_string = self.textFont.render(computer_pos_string,True,self.fontColor)
-		self.screen.blit(user_pos_string,(35,200))
-		self.screen.blit(computer_pos_string,(35,350))
+		self.screen.blit(user_pos_string,(self.infoBoardx + 10,self.infoBoardy + 120))
+		self.screen.blit(computer_pos_string,(self.infoBoardx + 10,self.infoBoardy + self.infoBoardheight + 20 + 10 + 50 + 60))
 
-		yString = " "
-		if yield_ == 1:
-			yString = "Yield to User"
-		elif yield_ == 2:
-			yString = "Yield to Computer"
-		yield_string = self.textFont.render(yString,True,self.fontColor)
-		self.screen.blit(yield_string,(35,100))
-		return
+		endString = " "
+		if end == True:
+			print("computer_score",computer_score)
+			print("user_score",user_score)
+			if computer_score > user_score:
+				endString = "The computer wins!"
+			elif computer_score < user_score:
+				endString = "The user wins!"
+			elif computer_scoren == user_score:
+				endString = "Both win!"
+			restartString = "Press R to restart."
+			end_string = self.textFont.render(endString,True,self.fontColor)
+			restart_string = self.textFont.render(restartString,True,self.fontColor)
+			self.screen.blit(end_string,(35,400))
+			self.screen.blit(restart_string,(25,440))
 
+		else:
+			yString = " "
+			if yield_ == 1:
+				yString = "Yield to User"
+			elif yield_ == 2:
+				yString = "Yield to Computer"
+			yield_string = self.textFont.render(yString,True,self.fontColor)
+			self.screen.blit(yield_string,(35,400))
 
-	# functino that draws tiles on the chess board according to the updated board, board is a two-dimensional array with its entries specifying tiles placed on the board. 
-	# (x,y) is the screen coordinate. 
-	def placeTile(self,(x,y)):
-		return
+		return end
 
-	def run_game(self,board,reversi):
-		# board = initializeBoard() (*init* from main.py)
+	def run_game(self,reversi):
+		end = False
+		board = reversi.getBoard()
 		AI = Reversi_AI()
-		self.drawBoard(board,0)
+		end = self.drawBoard(board,0)
 		yield_ = 0
 		waitForComputer = False
 		waitForUser = True
 
 		while 1:
-			for event in pygame.event.get():		
-				if event.type is pygame.QUIT:
-					sys.exit()			
+			for event in pygame.event.get():
+				if end == True:
+					board = reversi.getBoard()
+					end = self.drawBoard(board,0)			
+				elif event.type is pygame.QUIT:
+					sys.exit()	
 				elif event.type is pygame.MOUSEBUTTONDOWN:
 					(mouseX,mouseY) = pygame.mouse.get_pos()
 					if waitForUser is True:
@@ -199,61 +251,60 @@ class Reversi_GUI:
 								(user_x,user_y) = self.convertCoordinate(1,(mouseX,mouseY))
 								self.updatePos(1,user_x+1,user_y+1)
 								board = reversi.updateboard(user_x,user_y,self.user_Tile)
-								self.drawBoard(board,yield_)
+								end = self.drawBoard(board,yield_)
 								pygame.display.flip()
 								pygame.time.wait(200)
 								# reverse tiles
 								board = reversi.reverse(user_x,user_y,self.user_Tile,self.computer_Tile)
-								self.drawBoard(board,yield_)
+								end = self.drawBoard(board,yield_)
 								# allow any update of the display to be visible
 								pygame.display.flip()
 								pygame.time.wait(200)
 								waitForComputer = True
 								waitForUser = False
 							else:
-								print "invalid move"
+								print("invalid move")
 						else:
-							print "yield to computer"
+							print("yield to computer")
 							yield_ = 2
 							waitForComputer = True
 							waitForUser = False
 							
 
 				elif waitForComputer is True:
-				  	bestMove = reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
-				  	#print(bestMove)
-				  	if bestMove != None:
-				  		yield_ = 0
-				  		com_x = bestMove[0]
-				  		com_y = bestMove[1]
-				  		board = reversi.updateboard(com_x,com_y,self.computer_Tile)
-						self.updatePos(0,com_x+1,com_y+1)
-						self.drawBoard(board,yield_)
-						pygame.display.flip()
-						pygame.time.wait(200)
-						print "waitForComputer"
+					bestMove = reversi.searchbestmoves(self.computer_Tile, self.user_Tile)
+					if bestMove != None:
+							yield_ = 0
+							com_x = bestMove[0]
+							com_y = bestMove[1]
+							board = reversi.updateboard(com_x,com_y,self.computer_Tile)
+							self.updatePos(0,com_x+1,com_y+1)
+							end = self.drawBoard(board,yield_)
+							pygame.display.flip()
+							pygame.time.wait(200)
+							print("waitForComputer")
 						# reverse tiles
-				 		board = reversi.reverse(com_x,com_y,self.computer_Tile,self.user_Tile)			 		
-				 	else: 
-				 		print "yield to user"
-				 		yield_ = 1	
+							board = reversi.reverse(com_x,com_y,self.computer_Tile,self.user_Tile)			 		
+					else: 
+						print("yield to user")
+						yield_ = 1	
 				 		
-				 	waitForComputer  = False
-				 	waitForUser = True
+					waitForComputer  = False
+					waitForUser = True
 				 	
 				 	# when waitForUser is True but user did not click on the board.
 				else:
-				 	if len(AI.searchAllmoves(board,"X","0")) == 0:
-				 		waitForComputer = True
+					if len(AI.searchAllmoves(board,"X","0")) == 0:
+						waitForComputer = True
 						waitForUser = False
 						yield_ = 2
-						print "yield to computer"
+						print("yield to computer")
 						
 
 
 				# update board
 
-				self.drawBoard(board,yield_)
+				end = self.drawBoard(board,yield_)
 			# allow any update of the display to be visible
 			pygame.display.flip()
 			if yield_ != 0:
@@ -270,7 +321,6 @@ if __name__ == "__main__":
     computertile = reversi.assigntile('X')
        # print the initial board with four tiles in the center.
     reversi.initiateboard()
-    board = reversi.getBoard()
     game = Reversi_GUI()
-    game.run_game(board,reversi)
+    game.run_game(reversi)
 

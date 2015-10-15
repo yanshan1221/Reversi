@@ -1,0 +1,33 @@
+1. need to deal with the case when possibleMoves is an empty list. 
+4. still bug in the search for best move function, nontype not iterable problem. 
+6. when there is not any move on the board such that it triggers a flip, the user or the computer has to yield to each other. 
+     for computer round, this will be the case when possible moves return an empty list.
+     for user round, user will not be able to click on any spot on the board
+
+
+9. need a interface for: XX wins the game and would you like to play another around?
+
+To Do:
+9. Interface improvement. 
+10. Style
+
+
+Bug List:
+
+1.check valid move still allows user to place tile at position where results in no flip. the computer also could place tile on the
+position of the board where results in no flip
+
+
+Pass Testing: 
+
+bug 4 is now fixed
+bug 7 is now fixed
+finish 6
+finish 1
+finish 4
+
+
+need to indicate who wins the game. 
+the tile is too ugly.
+have a bracket for both the computer and the user: indicating which color is which. 
+
