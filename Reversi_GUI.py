@@ -18,7 +18,8 @@ from Reversi_AI import Reversi_AI
 """
 class Reversi_GUI:
 
-	""" Reversi_GUI is a class that creates Reversi_GUI object containing all methods for running the game with a user interface
+	""" 
+	Reversi_GUI is a class that creates Reversi_GUI object containing all methods for running the game with a user interface
 	"""
 
 	def __init__(self):
@@ -59,7 +60,7 @@ class Reversi_GUI:
 
 	def loadImages(self):
 		"""
-			loadImages loads all necessary pictures in bmp format for the program
+		loadImages loads all necessary pictures in bmp format for the program
 		"""
 
 		self.playerTileImage = pygame.image.load("white_tile.bmp").convert()
@@ -283,13 +284,13 @@ class Reversi_GUI:
 
 	def run_game(self,reversi):
 		"""
-			run_game controls the flow of the game
-			
-			Args:
-				reversi(object): contains all functions necessary for running the game
+		run_game controls the flow of the game
+		
+		Args:
+			reversi(object): contains all functions necessary for running the game
 
-			Returns:
-				restart(boolean): true if user wants to restart the game and false otherwise
+		Returns:
+			restart(boolean): true if user wants to restart the game and false otherwise
 		"""
 		restart = False
 		end = False 

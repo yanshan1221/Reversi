@@ -7,12 +7,12 @@ from Min_Max_Tree import Min_Max_Tree
 
 class Reversi_AI:
 	"""
-	   Reversi_AI is an AI Class for the Reversi Game, which contains all AI functions for Reversi.
-	   
-	   Attributes:
-	      Cweight(int): the weight for C postions on the board
-	      Xweight(int): the weight for X positions on the board
-	      cornerWeight(int): the weight for corners
+   Reversi_AI is an AI Class for the Reversi Game, which contains all AI functions for Reversi.
+   
+   Attributes:
+      Cweight(int): the weight for C postions on the board
+      Xweight(int): the weight for X positions on the board
+      cornerWeight(int): the weight for corners
 	"""
 	def __init__(self):
 		
@@ -21,28 +21,29 @@ class Reversi_AI:
 		self.cornerWeight = 3
 	
 	def onboard(self,x, y):
-		""" check if position (x,y) is on the board.
+		""" 
+		check if position (x,y) is on the board.
 		    
-		    Args: 
-		        x(int): The x coordinate on the board.
+		Args: 
+		    x(int): The x coordinate on the board.
 			y(int): The y coordinate on the board. 
-		    Returns:
-		        True if the (x,y) is within the board range, otherwise False
+			
+		Returns:
+		    True if the (x,y) is within the board range, otherwise False
 		"""
 		return x >= 0 and x <= 7 and y >= 0 and y <=7
 
 	def searchAllmoves(self,board,playerTile,opponentTile):
 		"""
-		  searchAllmoves search for all positions on the game board where whoever(user/computer)
-		  is playing in this round could place his tile.
+		searchAllmoves search for all positions on the game board where whoever(user/computer) is playing in this round could place his tile.
 
-		  Args:
-		     board(int[][]): board configuration stored in a 2-D array.
-		     playerTile(string): string that represents user/computer's a tile
-		     opponentTile(string): string that represents a tile of opposite color
+		Args:
+		    board(int[][]): board configuration stored in a 2-D array.
+		    playerTile(string): string that represents user/computer's a tile
+		    opponentTile(string): string that represents a tile of opposite color
 		
-		  Returns:
-		     AllPossibleMoves([]):a list of all possible moves (x,y) for whoever is playing in this round. 
+		Returns:
+		    AllPossibleMoves([]):a list of all possible moves (x,y) for whoever is playing in this round. 
 		"""
 		tilelist = []
 		# obtain a list of all positions occupied by player's tile.
@@ -126,6 +127,7 @@ class Reversi_AI:
 		   playerTile(str): A string that represents player's tile
 		   opponentTile(str): A string that represents player's opponent's tile
 		   m(boolean): True for min state and False for max state
+
 		Returns:
 		   The value assigned to the root node of the min-max tree
 		"""
@@ -220,16 +222,15 @@ class Reversi_AI:
 
 	def getBestMove(self,board,depth,playerTile,opponentTile):
 		"""
-		 getBestMove returns the best move computed by obtaining the best root value of 
-		 the min-max tree.
+		getBestMove returns the best move computed by obtaining the best root value of the min-max tree.
 
-		 Args:
+		Args:
 		   board(int[][]): 2-D array that stores the board configuration
 		   depth(int): depth of the min-max tree
 		   playerTile(str): a stirng that represents player's tile
 		   opponentTile(str): a string that represents opponent's tile
 
-		 Returns:
+		Returns:
 		   the best move (x,y) for player computed by the min-max tree algorithm and
 		   returns None if no such move exits
 		   

@@ -18,9 +18,9 @@ class Reversi:
         self.player = 'X'
 
     def initiateboard(self):
-    """
+        """
         initiateboard initializes the configuration of the board with four tiles already placed in the middle of the board
-    """
+        """
         for i in range(8):
             self.board.append([" "]*8)
      
@@ -33,36 +33,36 @@ class Reversi:
         self.board[4][4] = 'X'
 
     def onboard(self,x, y):
-    """
-    onboard checks if a move x,y is on the board
+        """
+        onboard checks if a move x,y is on the board
 
-    Args:
-        x(int): the x coordinate of the move
-        y(int): the y coordinate of the move
+        Args:
+            x(int): the x coordinate of the move
+            y(int): the y coordinate of the move
 
-    Returns:
-         true if the move is on the board and false otherwise
-    """     
+        Returns:
+             true if the move is on the board and false otherwise
+        """     
         return x >= 0 and x <= 7 and y >= 0 and y <=7
 
     def corner(self):
-    """
-    corner checks if the four corners of the board are empty
+        """
+        corner checks if the four corners of the board are empty
 
-    Returns: 
-        true if one of the four corners of the board is empty
-    """
+        Returns: 
+            true if one of the four corners of the board is empty
+        """
         if self.board[0][0] == " " or self.board[0][7] == " " or self.board[7][0] == "" or self.board[7][7] == " ":
             return True
         return False
          
     def getcorner(self):
-    """
-    get corner that is unoccupied
+        """
+        get corner that is unoccupied
 
-    Returns:
-        the x,y coordinates of any one of the unoccupied corners
-    """
+        Returns:
+            the x,y coordinates of any one of the unoccupied corners
+        """
         if self.board[0][0] == " ":
             return 0, 0
         elif self.board[0][7] == " ":
@@ -73,12 +73,12 @@ class Reversi:
             return 7, 7
 
     def getemptyspot(self):
-    """
-    getemptyspot gets the first empty spot found on the board
+        """
+        getemptyspot gets the first empty spot found on the board
 
-    Returns:
-        the x,y coordinates of the first empty spot found on the board
-    """
+        Returns:
+            the x,y coordinates of the first empty spot found on the board
+        """
         emptyspotlist = []
         for i in range(8):
             for j in range(8):
@@ -91,39 +91,38 @@ class Reversi:
 
         
     def getBoard(self):
-    """
-    returns the 2-D array that stores the board configuration
-    """
+        """
+        returns the 2-D array that stores the board configuration
+        """
         return self.board
 
     def updateboard(self,x,y,tile):
-    """
-      updateboard takes a move and returns board updated with the move
+        """
+        updateboard takes a move and returns board updated with the move
 
-      Args:
-        x(int): x coordinate of the move
-        y(int): y coordinate of the move
-        tile(str): type of the move
+        Args:
+            x(int): x coordinate of the move
+            y(int): y coordinate of the move
+            tile(str): type of the move
 
-      Returns:
-        updated board with tile placed on the move position
-    """
+        Returns:
+            updated board with tile placed on the move position
+        """
         self.board[y][x] = tile
         return self.board
 
         
     def searchbestmoves(self, playerTile, opponentTile):
-    """
-    search for the best moves using min-max algorithms with alpha-beta pruning implemented in the Reversi_AI.py
+        """
+        search for the best moves using min-max algorithms with alpha-beta pruning implemented in the Reversi_AI.py
 
-    Args:
-        playerTile(str): a string that represents player's tile
-        opponentTile(str): a string that represents player's opponent's tile
-    
-    Returns:
-        suggestMove((x,y)): best move for player 
-
-    """
+        Args:
+            playerTile(str): a string that represents player's tile
+            opponentTile(str): a string that represents player's opponent's tile
+        
+        Returns:
+            suggestMove((x,y)): best move for player 
+        """
         AI = Reversi_AI()
         suggestMove = AI.getBestMove(self.board,3,playerTile,opponentTile)
         return suggestMove
@@ -131,9 +130,9 @@ class Reversi:
 
     
     def reverse(self,initx,inity,tile,oppositetile):
-    """
-    reverse tiles in between two of player's tiles 
-    """    
+        """
+        reverse tiles in between two of player's tiles 
+        """    
         for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:# for the new tile, search in eight directions for its oppositetile
             x = initx
             y = inity
@@ -159,9 +158,9 @@ class Reversi:
 
     
     def getscore(self,usertile,computertile):
-    """
-    get scores for both the user and computer
-    """
+        """
+        get scores for both the user and computer
+        """
         countusertile = 0
         countcomputertile = 0
         for i in range(8):
@@ -176,9 +175,9 @@ class Reversi:
      
 
     def drawboard(self):
-    """
-    draw the game board in the terminal, used for testing
-    """
+        """
+        draw the game board in the terminal, used for testing
+        """
         print "   1   2   3   4   5   6   7   8"
         horline = " .___.___.___.___.___.___.___.___."
         verline = "|   |   |   |   |   |   |   |   | "
@@ -192,9 +191,9 @@ class Reversi:
             print horline
 
     def assigntile(self,usertile):
-    """
-        assign tile to user and computer
-    """
+        """
+            assign tile to user and computer
+        """
         tile = " "
         if usertile == "X":
             tile = "0"
