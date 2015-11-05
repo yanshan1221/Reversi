@@ -77,7 +77,8 @@ class Reversi_AI:
 					if abs(x -  tilelist[i][0]) > 1 or abs(y - tilelist[i][1]) > 1:
 						if (x,y) not in possibleMoves:
 							possibleMoves.append((x,y))
-        		return possibleMoves	
+		return possibleMoves	
+
 	def f_s(self,board,playerTile,opponentTile):
 		"""
 		f_s evaluates the score of a given board configuration based on the formula: 
@@ -112,7 +113,7 @@ class Reversi_AI:
 		return score 
 
 
-	def generateTree(self,board,depth,m,tile,oppositetile,alpha,beta):
+	def generateTree(self,board,depth,m,playerTile,opponentTile,alpha,beta):
 	#  m = True for min, false for max.
 		"""
 		generateTree generates a min-max tree with alpha-beta pruning, given an initial game board configuraiton.
@@ -175,7 +176,7 @@ class Reversi_AI:
 				newBoard[i][j] = board[i][j]
 		y = move[1]
 		x = move[0]
-		newBoard[y][x] = tile
+		newBoard[y][x] = playerTile
 		newBoard = self.reverseRep(newBoard,x,y,playerTile,opponentTile)
 		return newBoard
 
@@ -241,7 +242,7 @@ class Reversi_AI:
 			for move in possibleMoves:
 				newBoard = self.updateBoardRepresentation(board,move,playerTile,opponentTile)
 				alpha, beta = float("-inf"),float("inf")
-				new = self.generateTree(newBoard,depth,m,opponentTile,tile,alpha,beta)
+				new = self.generateTree(newBoard,depth,m,opponentTile,playerTile,alpha,beta)
 				if  new >= bestScore:
 					bestScore = new
 					bestMove = move
