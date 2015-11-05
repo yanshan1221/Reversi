@@ -273,13 +273,13 @@ if __name__ == "__main__":
 	board[0][0] = '0'
 
 	# Testing for Search ALl Moves:
-	#testPossibleMoves = reversi_AI.searchAllmoves(board,'X','0')
-	#for move in testPossibleMoves:
-		#print "Testing For searchAllmoves:", move
+	testPossibleMoves = reversi_AI.searchAllmoves(board,'X','0')
+	for move in testPossibleMoves:
+		print "Testing For searchAllmoves:", move
 
 	# Testing for f_s
-	#scoreR = reversi_AI.f_s(board,"X","0")
-	#print "Testin for f_s", scoreR
+	scoreR = reversi_AI.f_s(board,"X","0")
+	print "Testin for f_s", scoreR
 
 	(x,y) = reversi_AI.getBestMove(board,5,"X","0")
 

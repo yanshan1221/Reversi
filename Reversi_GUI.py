@@ -84,7 +84,7 @@ class Reversi_GUI:
 		return 
 
 
-	def drawBoard(self,board,yield_):
+	def drawBoard(self,reversi,yield_):
 		"""
 		drawBoard draws the 8*8 board and displays information about scores and status of the game on the screen.
 
@@ -98,7 +98,8 @@ class Reversi_GUI:
 
 		self.screen.fill((74,42,29))
 		pygame.draw.rect(self.screen, self.boardColor,pygame.Rect(self.boardX ,self.boardY, self.boardSize, self.boardSize))
-			
+		
+		board = reversi.getBoard()
 		for i in range(9): # draw all horizontal lines for the board.
 			startPos = (self.boardX, self.boardY + i*50)
 			endPos = (self.boardX + self.boardSize,self.boardY + i*50)
@@ -120,7 +121,7 @@ class Reversi_GUI:
 				elif board[i][j] == "0":
 					self.screen.blit(self.computerTileImage, pos_)
 
-		end = self.update_Text(yield_) # write information about scores and status on the board, check if the game reaches its end.
+		end = self.update_Text(reversi,yield_) # write information about scores and status on the board, check if the game reaches its end.
 		return end
 
 	
@@ -159,8 +160,10 @@ class Reversi_GUI:
 		if self.boardX > x or x > self.boardSize + self.boardX:
 			valid = False # check if the move is within the range of the board
 		if self.boardY > y or y > self.boardSize + self.boardY:
-			valid = False  # check if the move is within the range of the board
+			valid = False  # check if the move is within the range of the board		
 		(x,y) =  self.convertCoordinate(1,(x,y))
+		if board[y][x] == opponentTile or board[y][x] == playerTile:
+			valid = False # check if there is already a tile on position x,y
 		hasTile = False
 		for xdirection, ydirection in [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]]:
 			hasOpp = False
@@ -205,7 +208,7 @@ class Reversi_GUI:
 
 		return pos
 
-	def update_Text(self,yield_):
+	def update_Text(self,reversi,yield_):
 		"""
 		updates the scores of both user and computer and the current status of the game
 
@@ -231,7 +234,7 @@ class Reversi_GUI:
 		self.screen.blit(userString,(self.infoBoardx + 70,self.infoBoardy + 30)) # write "You" on user's info board
 		self.screen.blit(computerString,(self.infoBoardx + 70,self.infoBoardy + self.infoBoardheight + 20 + 30)) # write "Computer" on computer's info board.
 		
-		userScore, computerScore = reversi.getscore(self.userTile, self.computerTile) # updates scores of both user and computer. 
+		computerScore, userScore = reversi.getscore(self.userTile,self.computerTile)
 		end = False
 		end = self.endOfGame(computerScore, userScore) # checks if the game has ended
 		
@@ -292,20 +295,24 @@ class Reversi_GUI:
 		end = False 
 
 		board = reversi.getBoard() # initialize game board
-		AI = Reversi_AI() 
-		end = self.drawBoard(board,0) # draw the game board
+		AI = Reversi_AI()
+
+		end = self.drawBoard(reversi,0) # draw the game board
 		yield_ = 0
 		waitForComputer = False
 		waitForUser = True # let user go first
 
-		while 1:
-			for event in pygame.event.get():
-				
+		loop = True
+		while loop:
+			
+			for event in pygame.event.get():			
 				if end: # if end of the game
 					print("end of this round")
-					if event.type is pygame.K_r:
-						restart = True
-					break	# end the game 
+					if event.type == pygame.KEYDOWN:
+						if event.key == pygame.K_r:
+							restart = True
+							print("down key")
+							loop = False # end the game 
 				elif event.type is pygame.QUIT:
 					sys.exit()	
 				elif event.type is pygame.MOUSEBUTTONDOWN:
@@ -318,13 +325,13 @@ class Reversi_GUI:
 								self.updatePos(1,userX+1,userY+1)
 
 								board = reversi.updateboard(userX,userY,self.userTile) # update board according to new move
-								end = self.drawBoard(board,yield_)
+								end = self.drawBoard(reversi,yield_)
 
 								pygame.display.flip()
 								pygame.time.wait(200)
 								
 								board = reversi.reverse(userX,userY,self.userTile,self.computerTile) # reverse tiles
-								end = self.drawBoard(board,yield_)
+								end = self.drawBoard(reversi,yield_)
 								
 								pygame.display.flip()
 								pygame.time.wait(200)
@@ -347,7 +354,7 @@ class Reversi_GUI:
 
 							board = reversi.updateboard(bestMove[0],bestMove[1],self.computerTile)
 							self.updatePos(0,bestMove[0]+1,bestMove[1]+1) # update board according to new move
-							end = self.drawBoard(board,yield_) 
+							end = self.drawBoard(reversi,yield_) 
 
 							pygame.display.flip()
 							pygame.time.wait(200)
@@ -372,12 +379,13 @@ class Reversi_GUI:
 
 				# update board
 
-				end = self.drawBoard(board,yield_)
+				end = self.drawBoard(reversi,yield_)
 			pygame.display.flip()
 			if yield_ != 0:
 				pygame.time.wait(1000)
 			else: 
 				pygame.time.wait(200)
+		print("out of the loop")
 		return restart
 
 	def start_game(self,reversi):
@@ -386,7 +394,10 @@ class Reversi_GUI:
 		"""
 		restart = self.run_game(reversi)  
 		while restart:
-			restart = self.run_game(reversi)
+			print("here?")
+			newReversi = Reversi()  # initialize reversi object    
+			newReversi.initiateboard() # initialize the game board
+			restart = self.run_game(newReversi)
 		print("goodbye!")
 
 if __name__ == "__main__":
